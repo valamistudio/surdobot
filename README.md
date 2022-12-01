@@ -1,5 +1,5 @@
 ## Introduction
-This is a voice transcription bot for telegram. It runs Python 3 in a serverless AWS Lambda instance through [Chalice](https://github.com/aws/chalice) using [FFMpeg](https://ffmpeg.org/), [Telebot](https://github.com/tucnak/telebot) and [Wit.AI](https://wit.ai/).
+This is a voice transcription bot for telegram. It runs Python 3 in a serverless AWS Lambda instance through [Chalice](https://github.com/aws/chalice) using [FFMpeg](https://ffmpeg.org/), [pyTelegramBotAPI](https://pypi.org/project/pyTelegramBotAPI/) and [Wit.AI](https://wit.ai/).
 
 ## Running
 ```sh
@@ -14,12 +14,12 @@ mkdir surdobot
 cd surdobot
 python -m venv venv
 source venv/scripts/activate
-pip install chalice
-chalice new-project surdobot
+git clone https://github.com/valamistudio/surdobot.git
 cd surdobot
+pip install -r requirements.txt
 chalice deploy
 
-curl -X "POST" "https://api.telegram.org/bot<YOUR_BOT_TOKEN>" -d '{"url": "<REST_API_URL>/webhook"}' -H 'Content-Type: application/json; charset=utf-8'
+curl -X "POST" "https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook" -d '{"url": "<REST_API_URL>/webhook"}' -H 'Content-Type: application/json; charset=utf-8'
 ```
 
 ## `.chalice/config.json`
