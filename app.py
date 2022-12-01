@@ -74,15 +74,21 @@ def split_file(file: str):
 def get_files(message) -> Union[list[str], None]:
     voice = message.get('voice')
     file = None
+    duration = None
     if voice:
         file = get_voice_file(voice)
+        duration = voice.get('duration')
 
     video = message.get('video_note')
     if video:
         file = get_video_file(video)
+        duration = video.get('duration')
 
     if file:
-        return split_file(file)
+        if duration and duration <= MAX_DURATION:
+            return [file]
+        else:
+            return split_file(file)
 
 def ellipsis(old: Union[str, None], new: str) -> str:
     if old:
@@ -125,10 +131,13 @@ def append_message(reply, chat_id: int, message_id: int, text: str) -> Union[tel
     return ret
 
 def commit_message(reply) -> None:
-    bot.edit_message_text(chat_id = reply.chat.id,
-                          message_id = reply.message_id,
-                          text = reply.text[:-4],
-                          parse_mode = TELEGRAM_PARSE_MODE)
+    if reply.text == TELEGRAM_INITIAL_MESSAGE:
+        delete_message(reply)
+    else:
+        bot.edit_message_text(chat_id = reply.chat.id,
+                              message_id = reply.message_id,
+                              text = reply.text[:-4],
+                              parse_mode = TELEGRAM_PARSE_MODE)
 
 def delete_message(reply) -> None:
     bot.delete_message(reply.chat.id, reply.message_id)
@@ -137,6 +146,7 @@ def delete_message(reply) -> None:
 def webhook() -> None:
     import json
     import requests
+    import re
 
     request = app.current_request
     if request is None:
@@ -181,12 +191,16 @@ def webhook() -> None:
                              parse_mode = TELEGRAM_PARSE_MODE)
     try:
         files = get_files(message)
-        if files is None:
-            delete_message(reply)
-            return
-
-        for file in files:
-            for i in range(3): #attemps
+    except Exception as e:
+        print(e)
+        delete_message(reply)
+        return
+    if files is None:
+        delete_message(reply)
+        return
+    for file in files:
+        for i in range(3): #attemps
+            try:
                 print(f'Attempt #{i + 1}...')
                 with open(file, 'rb') as f:
                     resp = requests.post(
@@ -200,30 +214,16 @@ def webhook() -> None:
                         data = f,
                         stream = True)
 
-                transfer_encoding = resp.headers.get('transfer-encoding')
-                if transfer_encoding == 'chunked':
-                    for chunk in resp.raw.read_chunked():
-                        try:
-                            obj = json.loads(chunk)
-                        except:
-                            continue
-
-                        is_final = obj.get('is_final')
-                        if is_final is None:
-                            continue
-
-                        text = obj.get('text')
-                        if text:
-                            print(f'Transcribed text: "{text}"')
-                            reply = append_message(reply, chat_id, message_id, text)
-
-                    commit_message(reply)
-                    return #sucess, no need to retry
-                else:
-                    content = resp.json()
-                    print(f'Not chunked response: {content}')
-    except Exception as e:
-        print(e)
-        pass
+                bytes = resp.raw.read()
+                content = bytes.decode(json.detect_encoding(bytes))
+                data = re.split(r'(?<=\})\s*(?=\{)', content)
+                jsons = [json.loads(item) for item in data]
+                finals = [obj.get('text') for obj in jsons if obj.get('is_final')]
+                reply = append_message(reply, chat_id, message_id, ' '.join(finals))
+                commit_message(reply)
+                return
+            except Exception as e:
+                print(e)
+                pass
 
     delete_message(reply)
