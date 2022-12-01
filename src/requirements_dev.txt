@@ -1,0 +1,8 @@
+attrs==21.4.0
+botocore==1.29.20
+chalice==1.27.3
+click==8.1.3
+inquirer==2.10.1
+PyYAML==6.0
+six==1.16.0
+typing_extensions==4.4.0
