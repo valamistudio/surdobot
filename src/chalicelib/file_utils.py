@@ -26,7 +26,6 @@ def __get_file_id(file) -> Union[str, None]:
 
 def __get_voice_file(voice) -> Union[str, None]:
     import subprocess
-    import os
 
     file_id = __get_file_id(voice)
     if file_id is None:
@@ -48,7 +47,7 @@ def __get_video_file(video) -> Union[str, None]:
     __download_file(file_id, MP4_FILE_NAME)
 
     subprocess.Popen(['ffmpeg', '-y', '-i', MP4_FILE_NAME, '-vn', '-acodec', 'copy', AAC_FILE_NAME]).wait()
-    subprocess.Popen(['ffmpeg', '-y', '-i', AAC_FILE_NAME, MP3_FILE_NAME]).wait()
+    subprocess.Popen(['ffmpeg', '-y', '-i', AAC_FILE_NAME, '-map', '0:a:0', '-b:a', '41k', MP3_FILE_NAME]).wait()
 
     return MP3_FILE_NAME
 
