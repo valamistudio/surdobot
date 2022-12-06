@@ -24,33 +24,14 @@ def webhook() -> None:
 
     message = body.get('message')
     if message is None:
+        message = body.get('channel_post')
+
+    if not bot_utils.validate_message(message):
         return
 
     message_id = message.get('message_id')
-    if message_id is None:
-        return
-
-    sender = message.get('from')
-    if sender is None:
-        return
-
-    is_bot = sender.get('is_bot')
-    if is_bot:
-        print('Sender is a bot. Skipping...')
-        return
-
     chat = message.get('chat')
-    if chat is None:
-        return
-
     chat_id = chat.get('id')
-    if chat_id is None:
-        return
-
-    if not message.get('voice') and not message.get('video_note'):
-        print('Message does not contain voice or video note. Skipping...')
-        return
-
     reply = bot_utils.send_initial_message(chat_id, message_id)
 
     try:

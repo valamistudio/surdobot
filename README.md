@@ -34,12 +34,14 @@ curl -X "POST" "https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook" -d '{"u
       "api_gateway_stage": "api",
       "environment_variables": {
         "bot_token": "<YOUR_BOT_TOKEN>",
-        "wit_token": "<YOUR_WIT_TOKEN>"
+        "wit_token": "<YOUR_WIT_TOKEN>",
+        "user_ids": "<OPTIONAL_USER_ID_COMMA_SEPARATED_WHITELIST>"
       }
     }
   }
 }
 ```
+If `user_ids` is assigned, the bot will only respond to private chat of users in the whitelist or to groups/supergroups/channels of which any user of the whitelist is a member. Otherwise, the bot will apply no restrictions.
 
 ### Useful links
 - [Telegram BotFather](https://t.me/BotFather)
