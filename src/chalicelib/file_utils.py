@@ -4,9 +4,10 @@ from typing import Union
 MAX_DURATION = 300
 MAX_SIZE = 20 * 1024 * 1024 #MB
 
+CONTENT_TYPE = 'audio/mpeg'
+
 OGG_FILE_NAME = '/tmp/audio.ogg'
 MP3_FILE_NAME = '/tmp/audio.mp3'
-COMPRESSED_FILE_NAME = '/tmp/compressed.mp3'
 AAC_FILE_NAME = '/tmp/audio.aac'
 MP4_FILE_NAME = '/tmp/video.mp4'
 OUT_FILE_NAME = '/tmp/out%03d.mp3'
@@ -25,6 +26,7 @@ def __get_file_id(file) -> Union[str, None]:
 
 def __get_voice_file(voice) -> Union[str, None]:
     import subprocess
+    import os
 
     file_id = __get_file_id(voice)
     if file_id is None:
@@ -32,7 +34,7 @@ def __get_voice_file(voice) -> Union[str, None]:
 
     __download_file(file_id, OGG_FILE_NAME)
 
-    subprocess.Popen(['ffmpeg', '-y', '-i', OGG_FILE_NAME, MP3_FILE_NAME]).wait()
+    subprocess.Popen(['ffmpeg', '-y', '-i', OGG_FILE_NAME, '-map', '0:a:0', '-b:a', '41k', MP3_FILE_NAME]).wait()
 
     return MP3_FILE_NAME
 
@@ -57,18 +59,6 @@ def __split_file(file: str):
     subprocess.Popen(['ffmpeg', '-y', '-i', file, '-f', 'segment', '-segment_time', str(MAX_DURATION), '-c', 'copy', OUT_FILE_NAME]).wait()
     return glob.glob(OUT_BLOB)
 
-def __compress(file: str):
-    import os
-    import subprocess
-
-    stats = os.stat(file)
-    print(f'Original file size: {stats.st_size}')
-
-    subprocess.Popen(['ffmpeg', '-y', '-i', file, '-map', '0:a:0', '-b:a', '96k', COMPRESSED_FILE_NAME]).wait()
-
-    stats = os.stat(file)
-    print(f'Compressed file size: {stats.st_size}')
-
 def get_files(message) -> Union[list[str], None]:
     voice = message.get('voice')
     file = None
@@ -83,7 +73,6 @@ def get_files(message) -> Union[list[str], None]:
         duration = video.get('duration')
 
     if file:
-        #__compress(file)
         if duration and duration <= MAX_DURATION:
             return [file]
         else:
