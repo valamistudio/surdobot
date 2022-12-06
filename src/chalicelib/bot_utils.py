@@ -3,7 +3,7 @@ from . import string_utils
 import telebot
 from typing import Union
 
-TELEGRAM_INITIAL_MESSAGE = '- <i>Transcrevendo</i> ...'
+TELEGRAM_INITIAL_MESSAGE = '- <i>Transcrevendo</i>'
 TELEGRAM_PARSE_MODE = 'HTML'
 
 bot_token = os.environ.get("bot_token")
@@ -40,6 +40,7 @@ def append_message(reply, chat_id: int, message_id: int, text: str) -> Union[tel
     if next:
         return append_message(None, chat_id, ret.message_id, next)  # type: ignore
 
+    ret.initial = False # type: ignore
     return ret
 
 def commit_message(reply) -> None:

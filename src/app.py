@@ -2,7 +2,7 @@ from chalice.app import Chalice
 import os
 from chalicelib import file_utils, bot_utils
 
-wit_token = os.environ.get("wit_token")
+wit_token = os.environ.get('wit_token')
 
 app = Chalice(app_name='surdobot')
 
@@ -85,7 +85,9 @@ def webhook() -> None:
                 data = re.split(r'(?<=\})\s*(?=\{)', content)
                 jsons = [json.loads(item) for item in data]
                 finals = [obj.get('text') for obj in jsons if obj.get('is_final')]
-                reply = bot_utils.append_message(reply, chat_id, message_id, ' '.join(finals))
+                text = ' '.join(finals)
+                print(f'Transcribed text: {text}')
+                reply = bot_utils.append_message(reply, chat_id, message_id, text)
                 bot_utils.commit_message(reply)
                 return
             except Exception as e:
