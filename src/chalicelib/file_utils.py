@@ -5,11 +5,12 @@ MAX_DURATION = 300
 MAX_SIZE = 20 * 1024 * 1024 #MB
 
 OGG_FILE_NAME = '/tmp/audio.ogg'
-WAV_FILE_NAME = '/tmp/audio.wav'
+MP3_FILE_NAME = '/tmp/audio.mp3'
+COMPRESSED_FILE_NAME = '/tmp/compressed.mp3'
 AAC_FILE_NAME = '/tmp/audio.aac'
 MP4_FILE_NAME = '/tmp/video.mp4'
-OUT_FILE_NAME = '/tmp/out%03d.wav'
-OUT_BLOB = '/tmp/out*.wav'
+OUT_FILE_NAME = '/tmp/out%03d.mp3'
+OUT_BLOB = '/tmp/out*.mp3'
 
 def __download_file(file_id: str, file_name: str) -> None:
     file_info = bot_utils.bot.get_file(file_id)
@@ -31,9 +32,9 @@ def __get_voice_file(voice) -> Union[str, None]:
 
     __download_file(file_id, OGG_FILE_NAME)
 
-    subprocess.Popen(['ffmpeg', '-y', '-i', OGG_FILE_NAME, WAV_FILE_NAME]).wait()
+    subprocess.Popen(['ffmpeg', '-y', '-i', OGG_FILE_NAME, MP3_FILE_NAME]).wait()
 
-    return WAV_FILE_NAME
+    return MP3_FILE_NAME
 
 def __get_video_file(video) -> Union[str, None]:
     import subprocess
@@ -45,9 +46,9 @@ def __get_video_file(video) -> Union[str, None]:
     __download_file(file_id, MP4_FILE_NAME)
 
     subprocess.Popen(['ffmpeg', '-y', '-i', MP4_FILE_NAME, '-vn', '-acodec', 'copy', AAC_FILE_NAME]).wait()
-    subprocess.Popen(['ffmpeg', '-y', '-i', AAC_FILE_NAME, WAV_FILE_NAME]).wait()
+    subprocess.Popen(['ffmpeg', '-y', '-i', AAC_FILE_NAME, MP3_FILE_NAME]).wait()
 
-    return WAV_FILE_NAME
+    return MP3_FILE_NAME
 
 def __split_file(file: str):
     import subprocess
@@ -55,6 +56,18 @@ def __split_file(file: str):
 
     subprocess.Popen(['ffmpeg', '-y', '-i', file, '-f', 'segment', '-segment_time', str(MAX_DURATION), '-c', 'copy', OUT_FILE_NAME]).wait()
     return glob.glob(OUT_BLOB)
+
+def __compress(file: str):
+    import os
+    import subprocess
+
+    stats = os.stat(file)
+    print(f'Original file size: {stats.st_size}')
+
+    subprocess.Popen(['ffmpeg', '-y', '-i', file, '-map', '0:a:0', '-b:a', '96k', COMPRESSED_FILE_NAME]).wait()
+
+    stats = os.stat(file)
+    print(f'Compressed file size: {stats.st_size}')
 
 def get_files(message) -> Union[list[str], None]:
     voice = message.get('voice')
@@ -70,6 +83,7 @@ def get_files(message) -> Union[list[str], None]:
         duration = video.get('duration')
 
     if file:
+        #__compress(file)
         if duration and duration <= MAX_DURATION:
             return [file]
         else:

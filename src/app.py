@@ -74,7 +74,7 @@ def webhook() -> None:
                         #&context=%7B%22locale%22%3A%22pt_BR%22%7D
                         'https://api.wit.ai/dictation',
                         headers = {
-                            'Content-Type': 'audio/wave',
+                            'Content-Type': 'audio/mpeg',
                             'Authorization': f'Bearer {wit_token}'
                         },
                         data = f,
