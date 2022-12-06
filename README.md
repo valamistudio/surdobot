@@ -15,14 +15,14 @@ cd surdobot
 python -m venv venv
 source venv/scripts/activate
 git clone https://github.com/valamistudio/surdobot.git
-cd surdobot
+cd surdobot/src
 pip install -r requirements.txt
 chalice deploy
 
 curl -X "POST" "https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook" -d '{"url": "<REST_API_URL>/webhook"}' -H 'Content-Type: application/json; charset=utf-8'
 ```
 
-## `.chalice/config.json`
+## `src/.chalice/config.json`
 ```json
 {
   "version": "2.0",
