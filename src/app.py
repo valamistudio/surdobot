@@ -69,10 +69,11 @@ def webhook() -> None:
                 text = ' '.join(finals)
                 print(f'Transcribed text: {text}')
                 reply = bot_utils.append_message(reply, chat_id, message_id, text)
-                bot_utils.commit_message(reply)
-                return
+                break
             except Exception as e:
                 print(e)
                 pass
 
-    bot_utils.delete_message(reply)
+        bot_utils.delete_message(reply)
+
+    bot_utils.commit_message(reply)
