@@ -4,12 +4,12 @@ This is a lightweight voice transcription bot for telegram. It runs Python 3 in 
 ## Running
 ```sh
 mkdir ~/.aws
-$ cat >> ~/.aws/config
+cat >> ~/.aws/config4 <<EOF
 [default]
-aws_access_key_id=YOUR_ACCESS_KEY_HERE
-aws_secret_access_key=YOUR_SECRET_ACCESS_KEY
-region=YOUR_REGION (such as us-west-2, us-west-1, etc)
-
+aws_access_key_id=<YOUR_ACCESS_KEY>
+aws_secret_access_key=<YOUR_SECRET_KEY>
+region=<YOUR_REGION> (such as us-west-2, us-west-1, etc)
+EOF
 mkdir surdobot
 cd surdobot
 python -m venv venv

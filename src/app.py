@@ -46,7 +46,7 @@ def webhook() -> None:
         return
 
     for file in files:
-        for i in range(3): #attemps
+        for i in range(3): #attempts
             try:
                 print(f'Attempt #{i + 1}...')
                 with open(file, 'rb') as f:
