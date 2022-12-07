@@ -1,5 +1,5 @@
+from __future__ import annotations
 from . import bot_utils
-from typing import Union
 
 MAX_DURATION = 300
 MAX_SIZE = 20 * 1024 * 1024 #MB
@@ -19,12 +19,12 @@ def __download_file(file_id: str, file_name: str) -> None:
     with open(file_name, 'wb') as new_file:
         new_file.write(downloaded_file)
 
-def __get_file_id(file) -> Union[str, None]:
+def __get_file_id(file) -> str | None:
     file_size = file.get('file_size')
     if file_size <= MAX_SIZE:
         return file.get('file_id')
 
-def __get_voice_file(voice) -> Union[str, None]:
+def __get_voice_file(voice) -> str | None:
     import subprocess
 
     file_id = __get_file_id(voice)
@@ -37,7 +37,7 @@ def __get_voice_file(voice) -> Union[str, None]:
 
     return MP3_FILE_NAME
 
-def __get_video_file(video) -> Union[str, None]:
+def __get_video_file(video) -> str | None:
     import subprocess
 
     file_id = __get_file_id(video)
@@ -58,7 +58,7 @@ def __split_file(file: str):
     subprocess.Popen(['ffmpeg', '-y', '-i', file, '-f', 'segment', '-segment_time', str(MAX_DURATION), '-c', 'copy', OUT_FILE_NAME]).wait()
     return glob.glob(OUT_BLOB)
 
-def get_files(message) -> Union[list[str], None]:
+def get_files(message) -> list[str] | None:
     voice = message.get('voice')
     file = None
     duration = None

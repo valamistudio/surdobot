@@ -1,18 +1,16 @@
-from typing import Union, Tuple
+from __future__ import annotations
+from typing import Tuple
 
-def ellipsis(old: Union[str, None], new: str) -> str:
-    if old:
-        return f'{old[:-3]}{new} ...'
-    else:
-        return f'{new} ...'
+def __concat(old: str | None, new: str, ellipsis: bool) -> str:
+    return f'{old[:-3] if old else None}{new}{" ..." if ellipsis else None}'
 
-def split(old: Union[str, None], new: str) -> Tuple[str, Union[str, None]]:
+def split(old: str | None, new: str) -> Tuple[str, str | None]:
     length = 4096 - 4
     if old:
         length -= len(old) - 3
 
     if len(new) < length:
-        return (ellipsis(old, new), None)
+        return (__concat(old, new, True), None)
 
     index = new[:length].rfind(' ')
-    return (ellipsis(old, new[:index]), new[index + 1:])
+    return (__concat(old, new[:index], False), __concat(None, new[index + 1:], True))

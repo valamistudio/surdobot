@@ -1,8 +1,8 @@
+from __future__ import annotations
 import os
 import re
 from . import string_utils
 import telebot
-from typing import Union
 
 TELEGRAM_INITIAL_MESSAGE = '- <i>Transcrevendo</i>'
 TELEGRAM_PARSE_MODE = 'HTML'
@@ -46,26 +46,26 @@ def validate_message(message) -> bool:
     if user_ids is None:
         return True
 
-    if chat.get('type') in ['group', 'supergroup', 'channel']:
-        if all(bot.get_chat_member(chat.get('id'), user_id).status in ['left', 'kicked'] for user_id in user_ids):
-            print('Bot owner is not a member of the group. Skipping...')
-            return False
-    elif chat.get('type') == 'private':
+    if chat.get('type') == 'private':
         if sender.get('id') not in user_ids:
             print('Sender is not the bot owner. Skipping...')
+            return False
+    else: #group, supergroup or channel
+        if all(bot.get_chat_member(chat.get('id'), user_id).status in ['left', 'kicked'] for user_id in user_ids):
+            print('Bot owner is not a member of the group. Skipping...')
             return False
 
     return True
 
 def send_initial_message(chat_id: int, message_id: int) -> telebot.types.Message:
     ret = append_message(None, chat_id, message_id, TELEGRAM_INITIAL_MESSAGE)
-    ret.initial = True  # type: ignore
-    return ret  # type: ignore
+    ret.initial = True # type: ignore
+    return ret
 
-def append_message(reply, chat_id: int, message_id: int, text: str) -> Union[telebot.types.Message, bool, None]:
+def append_message(reply: telebot.types.Message | None, chat_id: int, message_id: int, text: str) -> telebot.types.Message:
     if reply:
-        if reply.initial:
-            reply.initial = False
+        if reply.initial: # type: ignore
+            reply.initial = False # type: ignore
             (cur, next) = string_utils.split(None, text)
         else:
             (cur, next) = string_utils.split(reply.text, text)
@@ -82,18 +82,18 @@ def append_message(reply, chat_id: int, message_id: int, text: str) -> Union[tel
                                parse_mode = TELEGRAM_PARSE_MODE)
 
     if next:
-        return append_message(None, chat_id, ret.message_id, next)  # type: ignore
+        return append_message(None, chat_id, ret.message_id, next) # type: ignore
 
     ret.initial = False # type: ignore
-    return ret
+    return ret # type: ignore
 
-def commit_message(reply) -> None:
-    if reply.initial:
+def commit_message(reply: telebot.types.Message) -> None:
+    if reply.initial: # type: ignore
         delete_message(reply)
     else:
         bot.edit_message_text(chat_id = reply.chat.id,
                               message_id = reply.message_id,
-                              text = reply.text[:-4],
+                              text = reply.text[:-4], # type: ignore
                               parse_mode = TELEGRAM_PARSE_MODE)
 
 def delete_message(reply) -> None:
