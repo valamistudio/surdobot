@@ -1,3 +1,6 @@
+![GitHub](https://img.shields.io/github/license/valamistudio/surdobot?style=flat-square)
+![Libraries.io dependency status for GitHub repo](https://img.shields.io/librariesio/github/valamistudio/surdobot?style=flat-square)
+
 ## Introduction
 This is a lightweight voice transcription bot for telegram. It runs Python 3 in a serverless AWS Lambda instance through [Chalice](https://github.com/aws/chalice) using [FFMpeg](https://ffmpeg.org/), [pyTelegramBotAPI](https://pypi.org/project/pyTelegramBotAPI/) and [Wit.AI](https://wit.ai/).
 
