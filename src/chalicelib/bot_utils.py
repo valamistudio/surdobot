@@ -4,7 +4,7 @@ import re
 from . import string_utils
 import telebot
 
-TELEGRAM_INITIAL_MESSAGE = '- <i>Transcrevendo</i>'
+TELEGRAM_INITIAL_MESSAGE = '- <i>Transcribing</i>'
 TELEGRAM_PARSE_MODE = 'HTML'
 
 __user_ids = os.environ.get('user_ids')
@@ -96,5 +96,5 @@ def commit_message(reply: telebot.types.Message) -> None:
                               text = reply.text[:-4], # type: ignore
                               parse_mode = TELEGRAM_PARSE_MODE)
 
-def delete_message(reply) -> None:
+def delete_message(reply: telebot.types.Message) -> None:
     bot.delete_message(reply.chat.id, reply.message_id)

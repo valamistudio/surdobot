@@ -13,7 +13,7 @@ if wit_token is None:
 app = Chalice(app_name='surdobot')
 
 @retry(tries = 3)
-def respond(file: str, chat_id, message_id, reply: telebot.types.Message) -> telebot.types.Message | None:
+def respond(file: str, chat_id: int, message_id: int, reply: telebot.types.Message) -> telebot.types.Message | None:
     import json
     import requests
     import re
