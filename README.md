@@ -13,13 +13,11 @@ aws_access_key_id=<YOUR_ACCESS_KEY>
 aws_secret_access_key=<YOUR_SECRET_KEY>
 region=<YOUR_REGION> (such as us-west-2, us-west-1, etc)
 EOF
-mkdir surdobot
-cd surdobot
-python -m venv venv
-source venv/scripts/activate
 git clone https://github.com/valamistudio/surdobot.git
 cd surdobot/src
-pip install -r requirements.txt
+python -m pip install pipenv
+python -m pipenv install
+python -m pipenv shell
 chalice deploy
 
 curl -X "POST" "https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook" -d '{"url": "<REST_API_URL>/webhook"}' -H 'Content-Type: application/json; charset=utf-8'
