@@ -1,14 +1,15 @@
 from __future__ import annotations
-from chalice.app import Chalice
 import os
-from chalicelib import file_utils, bot_utils
+from chalice.app import Chalice
+import sys
 import telebot
 from retry import retry
+from chalicelib import file_utils, bot_utils
 
 wit_token = os.environ.get('wit_token')
 if wit_token is None:
     print('wit_token is not assigned')
-    exit()
+    sys.exit()
 
 app = Chalice(app_name='surdobot')
 
