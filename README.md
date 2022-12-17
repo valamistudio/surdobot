@@ -15,9 +15,7 @@ region=<YOUR_REGION> (such as us-west-2, us-west-1, etc)
 EOF
 git clone https://github.com/valamistudio/surdobot.git
 cd surdobot/src
-python -m pip install pipenv
-python -m pipenv install
-python -m pipenv shell
+mkdir .chalice
 cat >> .chalice/config.json <<EOF
 {
   "version": "2.0",
@@ -36,6 +34,9 @@ cat >> .chalice/config.json <<EOF
   }
 }
 EOF
+python -m pip install pipenv
+python -m pipenv install
+python -m pipenv shell
 chalice deploy
 
 curl -X "POST" "https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook" -d '{"url": "<REST_API_URL>/webhook"}' -H 'Content-Type: application/json; charset=utf-8'
