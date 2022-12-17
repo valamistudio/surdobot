@@ -41,7 +41,7 @@ chalice deploy
 
 curl -X "POST" "https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook" -d '{"url": "<REST_API_URL>/webhook"}' -H 'Content-Type: application/json; charset=utf-8'
 ```
-The REST API URL comes from the `chalice deploy` command output, so you'll probably want to execute that last command in separate.
+The REST API URL comes from the `chalice deploy` command output, so you'll probably want to execute that last command in separate.  
 On `.chalice/config.json`, if `user_ids` is assigned, the bot will only respond to private chat of users in the whitelist or to groups/supergroups/channels of which any user of the whitelist is a member. Otherwise, the bot will apply no restrictions.
 
 ### Useful links
