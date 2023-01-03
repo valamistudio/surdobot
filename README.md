@@ -7,7 +7,7 @@ This is a lightweight voice transcription bot for telegram. It runs Python 3 in 
 ## Running
 ```sh
 mkdir ~/.aws
-cat >> ~/.aws/config4 <<EOF
+cat >> ~/.aws/config <<EOF
 [default]
 aws_access_key_id=<YOUR_ACCESS_KEY>
 aws_secret_access_key=<YOUR_SECRET_KEY>
@@ -15,16 +15,8 @@ region=<YOUR_REGION> (such as us-west-2, us-west-1, etc)
 EOF
 git clone https://github.com/valamistudio/surdobot.git
 cd surdobot/src
-python -m pip install pipenv
-python -m pipenv install
-python -m pipenv shell
-chalice deploy
-
-curl -X "POST" "https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook" -d '{"url": "<REST_API_URL>/webhook"}' -H 'Content-Type: application/json; charset=utf-8'
-```
-
-## `src/.chalice/config.json`
-```json
+mkdir .chalice
+cat >> .chalice/config.json <<EOF
 {
   "version": "2.0",
   "app_name": "surdobot",
@@ -41,8 +33,16 @@ curl -X "POST" "https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook" -d '{"u
     }
   }
 }
+EOF
+python -m pip install pipenv
+python -m pipenv install
+python -m pipenv shell
+chalice deploy
+
+curl -X "POST" "https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook" -d '{"url": "<REST_API_URL>/webhook"}' -H 'Content-Type: application/json; charset=utf-8'
 ```
-If `user_ids` is assigned, the bot will only respond to private chat of users in the whitelist or to groups/supergroups/channels of which any user of the whitelist is a member. Otherwise, the bot will apply no restrictions.
+The REST API URL comes from the `chalice deploy` command output, so you'll probably want to execute that last command in separate.  
+On `.chalice/config.json`, if `user_ids` is assigned, the bot will only respond to private chat of users in the whitelist or to groups/supergroups/channels of which any user of the whitelist is a member. Otherwise, the bot will apply no restrictions.
 
 ### Useful links
 - [Telegram BotFather](https://t.me/BotFather)
