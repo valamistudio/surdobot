@@ -35,8 +35,11 @@ def respond(file: str, chat_id: int, message_id: int, reply: telebot.types.Messa
     jsons = [json.loads(item) for item in data]
     finals = [obj.get('text') for obj in jsons if obj.get('is_final')]
     text = ' '.join(finals)
-    print(f'Transcribed text: {text}')
-    return bot_utils.append_message(reply, chat_id, message_id, text)
+    if len(text) == 0:
+        print('Empty text')
+    else:
+        print(f'Transcribed text: {text}')
+        return bot_utils.append_message(reply, chat_id, message_id, text)
 
 @app.route('/webhook', methods=['POST'])
 def webhook() -> None:
