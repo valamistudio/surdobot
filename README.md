@@ -46,7 +46,7 @@ The REST API URL comes from the `chalice deploy` command output, so you'll proba
 
 ### `.chalice/config.json`
 - If `user_ids` is assigned, the bot will only respond to private chat of users in the whitelist or to groups/supergroups/channels of which any user of the whitelist is a member. Otherwise, the bot will apply no restrictions.
-- The default value for `lambda_timeout` is 60. You can suppress this attribute if you want to keep it. Jobs that takes long than the set timeout will probably create an [infinite message loop](#infinite-message-loop).
+- The default value for `lambda_timeout` is 60. You can suppress this attribute if you want to keep it. Jobs that takes long than the set timeout will probably create an [infinite message loop](#infinite-message-loop). Wit.AI usually takes around 20% of the audio file duration do transcribe it (i.e a 60 second file takes around 12 seconds to transcribe).
 
 ### Useful links
 - [Telegram BotFather](https://t.me/BotFather)
@@ -54,7 +54,7 @@ The REST API URL comes from the `chalice deploy` command output, so you'll proba
 - [FFMPEG Lambda Layer](https://serverlessrepo.aws.amazon.com/applications/arn:aws:serverlessrepo:us-east-1:145266761615:applications~ffmpeg-lambda-layer)
 
 ## Infinite message loop
-If an operation fails to return "200 OK" (timeout, unhandled exception or whatnot), the bot will try to execute the same operation again, which will probably fail as well. This probably means that the bot will enter a infinite message loop. I don't know how to fix this programmatically yet, but here's a command you can run to reset it:
+If an operation fails to return "200 OK" (timeout, unhandled exception or whatnot), the bot will try to execute the same operation again, which will probably fail as well. This probably means that the bot will enter a infinite message loop. Apart from always returning 200, which I don't think it's the right call, I don't know how to fix this programmatically yet, but here's a command you can run to reset it:
 ```sh
 curl -X "POST" "https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook" -d '{"url": "<REST_API_URL>/webhook", "drop_pending_updates": true}' -H 'Content-Type: application/json; charset=utf-8'
 ```

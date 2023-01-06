@@ -33,6 +33,13 @@ def respond(file: str, chat_id: int, message_id: int, reply: telebot.types.Messa
     content = bytes.decode(json.detect_encoding(bytes))
     data = re.split(r'(?<=\})\s*(?=\{)', content)
     jsons = [json.loads(item) for item in data]
+    errors = [obj.get('error') for obj in jsons]
+    errors = [error for error in errors if error is not None]
+    if any(errors):
+        print('Wit.AI Errors:')
+        for error in errors:
+            print(error)
+
     finals = [obj.get('text') for obj in jsons if obj.get('is_final')]
     text = ' '.join(finals)
     if len(text) == 0:
