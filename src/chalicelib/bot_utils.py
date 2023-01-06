@@ -7,6 +7,11 @@ import telebot
 TELEGRAM_INITIAL_MESSAGE = '- <i>Transcribing</i>'
 TELEGRAM_PARSE_MODE = 'HTML'
 
+# Although file_utils has an implementation for splitting long audio files before sending to Wit.AI
+# And although the maximum duration is 300 seconds (5 minutes) for Wit.AI
+# The bot is not behaving as expected for audios longer than ~90s, so I'm hard capping this for now
+MAX_DURATION = 90
+
 __user_ids = os.environ.get('user_ids')
 user_ids = [int(user_id) for user_id in filter(None, re.split(r'[,;]', __user_ids))] if __user_ids else None
 
@@ -21,8 +26,17 @@ def validate_message(message) -> bool:
     if message is None:
         return False
 
-    if not message.get('voice') and not message.get('video_note'):
+    voice = message.get('voice')
+    if voice is None:
+        voice = message.get('video_note')
+
+    if voice is None:
         print('Message does not contain voice or video note. Skipping...')
+        return False
+
+    duration = voice.get('duration')
+    if duration > MAX_DURATION:
+        print(f'Audio is longer than {MAX_DURATION}s ({duration}s). Skipping...')
         return False
 
     chat = message.get('chat')

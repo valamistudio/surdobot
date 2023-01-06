@@ -1,7 +1,10 @@
 from __future__ import annotations
 from . import bot_utils
 
+# This limit is useless at the moment, since there is a lower limit checked before this one
+# See bot_utils for more information
 MAX_DURATION = 300
+
 MAX_SIZE = 20 * 1024 * 1024 #MB
 
 CONTENT_TYPE = 'audio/mpeg'
