@@ -54,8 +54,8 @@ The REST API URL comes from the `chalice deploy` command output, so you'll proba
 - [FFMPEG Lambda Layer](https://serverlessrepo.aws.amazon.com/applications/arn:aws:serverlessrepo:us-east-1:145266761615:applications~ffmpeg-lambda-layer)
 
 ## Infinite message loop
-If an operation fails to return "200 OK" (timeout, unhandled exception or whatnot), the bot will try to execute the same operation again, which will probably fail as well. This probably means that the bot will enter a infinite message loop. Apart from always returning 200, which I don't think it's the right call, I don't know how to fix this programmatically yet, but here's a command you can run to reset it:
+If an operation fails to return "200 OK" (timeout, unhandled exception or whatnot), the bot will try to execute the same operation again, which will probably fail as well. This probably means that the bot will enter a infinite message loop. Apart from always returning 200, which I don't think it'd be the right call, I don't know how to fix this programmatically yet, but here's a command you can run to reset it:
 ```sh
 curl -X "POST" "https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook" -d '{"url": "<REST_API_URL>/webhook", "drop_pending_updates": true}' -H 'Content-Type: application/json; charset=utf-8'
 ```
-The [`drop_pending_updates`](https://core.telegram.org/bots/api#setwebhook) attribute will remove every pending request from the webhook queue. The bot token and REST API URL can be the same as the ones you used in the configuration steps, if they didn't changed.
+The [`drop_pending_updates`](https://core.telegram.org/bots/api#setwebhook) attribute will remove every pending request from the webhook queue. The bot token and REST API URL can be the same as the ones you used in the configuration steps, if they didn't change.
