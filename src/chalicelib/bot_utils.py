@@ -1,6 +1,7 @@
 from __future__ import annotations
 import os
 import re
+import sys
 from . import string_utils
 import telebot
 
@@ -18,7 +19,7 @@ user_ids = [int(user_id) for user_id in filter(None, re.split(r'[,;]', __user_id
 bot_token = os.environ.get("bot_token")
 if bot_token is None:
     print('bot_token is not assigned')
-    exit()
+    sys.exit()
 
 bot = telebot.TeleBot(bot_token)
 
